@@ -1,12 +1,13 @@
+use chrono::{ DateTime ,Utc};
+
 use std::net::IpAddr;
-// use macaddr::MacAddr6;
-use std::time::{SystemTime, Duration};
+use std::time::{Duration};
 
 #[derive(Debug)]
 pub struct Detection {
 	pub ipaddress: IpAddr,
 	pub mac_address: Option<String>,
-	pub timestamp:SystemTime,
+	pub timestamp:DateTime<Utc>,
 	pub response: bool,
 	pub latency: Duration,
 	pub scan_id: u32,

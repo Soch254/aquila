@@ -2,11 +2,12 @@ use super::model::Detection;
 
 use surge_ping::{Client, Config, PingIdentifier, PingSequence, SurgeError};
 use netneighbours::get_table;
+use chrono::Utc;
 
 use std::collections::HashMap;
 use std::net::IpAddr;
 use macaddr::MacAddr6;
-use std::time::{Duration, SystemTime};
+use std::time::{Duration};
 use std::io::ErrorKind;
 
 #[derive(Debug)]
@@ -54,23 +55,16 @@ async fn icmp_ping(ipaddress: IpAddr) -> Result<(bool, Duration), ProbeError>{
 
 fn get_macaddress(ipaddress: IpAddr) -> Option<String> {
 	// // get the table first
-	// let mac_address = get_table()
-	// .iter() //looks at the list
-	// .find(|(entry_ip, _)| *entry_ip == ip) //find the tuple with the ip that matches
-	// .map(|(_, mac)| *mac); // clone() because the .get() returns a &mac
-
 	// the get_table returns a vec<>
 	// we convert it to a hashmap for quicker lookup
 	let arp_table: HashMap<IpAddr, MacAddr6> = get_table().into_iter().collect();
 
 	arp_table.get(&ipaddress).map(|m| format!("{}", m))
 
-
 }
 
 pub async fn probe_execution(ipaddress: IpAddr, scan_id: u32) -> Result<Detection, ProbeError> {
-
-	let timestamp = SystemTime::now();
+	let timestamp = Utc::now(); // get time 
 
 	let (response, latency) = icmp_ping(ipaddress).await?;
 
